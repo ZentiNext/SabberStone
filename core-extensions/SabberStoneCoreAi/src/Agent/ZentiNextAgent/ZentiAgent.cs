@@ -5,12 +5,11 @@ using SabberStoneCore.Tasks;
 using SabberStoneCoreAi.Agent;
 using SabberStoneCoreAi.POGame;
 
-namespace SabberStoneCoreAi.src.Agent
+namespace SabberStoneCoreAi.Agent
 {
 	class ZentiAgent : AbstractAgent
 	{
-		private Random Rnd = new Random();
-
+		
 		public override void FinalizeAgent()
 		{
 		}
@@ -21,12 +20,16 @@ namespace SabberStoneCoreAi.src.Agent
 
 		public override PlayerTask GetMove(SabberStoneCoreAi.POGame.POGame poGame)
 		{
+			if (poGame.CurrentPlayer.Options().Count>1) {
+				return poGame.CurrentPlayer.Options()[1];
+			}
+			
 			return poGame.CurrentPlayer.Options()[0];
 		}
 
 		public override void InitializeAgent()
 		{
-			Rnd = new Random();
+	
 		}
 
 		public override void InitializeGame()

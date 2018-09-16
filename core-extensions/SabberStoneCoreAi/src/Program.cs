@@ -27,7 +27,7 @@ namespace SabberStoneCoreAi
 
 			Console.WriteLine("Setup POGameHandler");
 			AbstractAgent player1 = new FaceHunter();
-			AbstractAgent player2 = new FaceHunter();
+			AbstractAgent player2 = new ZentiAgent();
 			var gameHandler = new POGameHandler(gameConfig, player1, player2, debug:true);
 
 			Console.WriteLine("PlayGame");

@@ -16,6 +16,12 @@ namespace SabberStoneCoreAi.POGame
 		private Game game;
 		private Game origGame;
 		private bool debug;
+
+		public POGame(POGame poGame) {
+			this.game = poGame.game;
+			this.origGame = poGame.origGame;
+			this.debug = poGame.debug;
+		}
 			
 		public POGame(Game game, bool debug)
 		{
