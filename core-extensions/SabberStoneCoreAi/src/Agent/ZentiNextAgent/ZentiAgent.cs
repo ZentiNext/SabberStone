@@ -7,7 +7,7 @@ using SabberStoneCoreAi.POGame;
 
 namespace SabberStoneCoreAi.src.Agent
 {
-	class MyAgent : AbstractAgent
+	class ZentiAgent : AbstractAgent
 	{
 		private Random Rnd = new Random();
 
