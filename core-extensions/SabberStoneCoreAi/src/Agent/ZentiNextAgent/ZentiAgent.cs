@@ -4,6 +4,7 @@ using System.Text;
 using SabberStoneCore.Tasks;
 using SabberStoneCoreAi.Agent;
 using SabberStoneCoreAi.POGame;
+using SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts;
 
 namespace SabberStoneCoreAi.Agent
 {
@@ -20,11 +21,7 @@ namespace SabberStoneCoreAi.Agent
 
 		public override PlayerTask GetMove(SabberStoneCoreAi.POGame.POGame poGame)
 		{
-			if (poGame.CurrentPlayer.Options().Count>1) {
-				return poGame.CurrentPlayer.Options()[1];
-			}
-			
-			return poGame.CurrentPlayer.Options()[0];
+			return MonteCarloTreeSearch.findNextMove(poGame);
 		}
 
 		public override void InitializeAgent()
@@ -35,5 +32,7 @@ namespace SabberStoneCoreAi.Agent
 		public override void InitializeGame()
 		{
 		}
+
+		
 	}
 }

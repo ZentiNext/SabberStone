@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SabberStoneCoreAi.POGame;
 using System.Linq;
+using SabberStoneCore.Tasks;
 
 namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts.tree
 {
@@ -11,17 +12,70 @@ namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts.tree
 		POGame.POGame state;
 		Node parent;
 		List<Node> childArray;
+		int visits = 0;
+		int wins = 0;
+		double probability = 0.0;
+		PlayerTask nodeTask;
 
-		public Node()
-		{
-			
-			childArray = new List<Node>();
-		}
+		
 
 		public Node(POGame.POGame state)
 		{
 			this.state = state;
-			childArray = new List<Node>();
+			this.childArray = new List<Node>();
+			List<PlayerTask> options = state.CurrentPlayer.Options();
+			Dictionary<PlayerTask, POGame.POGame> simulation = state.Simulate(options);
+			this.state = null;
+			System.GC.Collect();
+			foreach (PlayerTask playerTask in options) {
+				childArray.Add(new Node(simulation.GetValueOrDefault(playerTask),this,playerTask));
+			}
+		}
+
+		public Node(POGame.POGame state, Node parent, PlayerTask playerTask) {
+			this.state = state;
+			this.parent = parent;
+			this.nodeTask = playerTask;
+
+			if (playerTask.PlayerTaskType == PlayerTaskType.END_TURN){
+				double reward = Reward.getReward(this.state);
+				this.state = null;
+				System.GC.Collect();
+				//this.wins += reward;
+				this.visits++;
+				this.probability = reward;
+				if(this.parent != null)
+				{
+					updateParents(this.parent , reward);
+				}
+			}else{
+				
+				this.childArray = new List<Node>();
+				List<PlayerTask> options = this.state.CurrentPlayer.Options();
+				Dictionary<PlayerTask, POGame.POGame> simulation = state.Simulate(options);
+				foreach (PlayerTask pTask in options)
+				{
+					childArray.Add(new Node(simulation.GetValueOrDefault(pTask), this, pTask));
+				}
+				this.state = null;
+				System.GC.Collect();
+
+			}
+		}
+
+		private void updateParents(Node parent ,double reward)
+		{
+			//parent.wins += reward;
+			parent.visits++;
+			if (parent.probability < reward) {
+				parent.probability = reward;
+			}
+			//parent.probability = parent.wins / parent.visits;
+
+			if (parent.parent != null)
+			{
+				updateParents(parent.parent, reward);
+			}
 		}
 
 		public Node(POGame.POGame state, Node parent, List<Node> childArray)
@@ -31,19 +85,7 @@ namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts.tree
 			this.childArray = childArray;
 		}
 
-		public Node(Node node)
-		{
-			this.childArray = new List<Node>();
-			this.state = new POGame.POGame(node.getState());
-			if (node.getParent() != null)
-				this.parent = node.getParent();
-			List<Node> childArray = node.getChildArray();
-			foreach (Node child in childArray)
-			{
-				this.childArray.Add(new Node(child));
-			}
-		}
-
+		
 		public POGame.POGame getState()
 		{
 			return state;
@@ -59,32 +101,23 @@ namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts.tree
 			return parent;
 		}
 
-		public void setParent(Node parent)
-		{
-			this.parent = parent;
-		}
 
 		public List<Node> getChildArray()
 		{
 			return childArray;
 		}
 
-		public void setChildArray(List<Node> childArray)
-		{
-			this.childArray = childArray;
+		public double getProbability() {
+			return probability;
 		}
 
-		public Node getRandomChildNode()
+		public PlayerTask getNodeTask()
 		{
-			int noOfPossibleMoves = this.childArray.Count;
-			int selectRandom = (int)(new Random().Next(noOfPossibleMoves) );
-			return this.childArray[selectRandom];
+			return nodeTask;
 		}
 
-		public Node getChildWithMaxScore()
-		{
-			return this.childArray.Max();
-			//Not yet fully implemented
-		}
+		
+
+		
 	}
 }

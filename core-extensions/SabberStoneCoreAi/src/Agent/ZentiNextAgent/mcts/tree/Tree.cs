@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SabberStoneCoreAi.POGame;
 
 namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts.tree
 {
@@ -8,29 +9,13 @@ namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts.tree
     {
 		Node root;
 
-		public Tree()
-		{
-			root = new Node();
+		public Tree(POGame.POGame poGame) {
+			this.root = new Node(poGame);
 		}
 
-		public Tree(Node root)
-		{
-			this.root = root;
-		}
-
-		public Node getRoot()
-		{
+		public Node getRoot() {
 			return root;
 		}
-
-		public void setRoot(Node root)
-		{
-			this.root = root;
-		}
-
-		public void addChild(Node parent, Node child)
-		{
-			//parent.getChildArray().add(child);
-		}
+		
 	}
 }
