@@ -17,12 +17,12 @@ namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts
 			Minion[] myMnions = initState.CurrentPlayer.BoardZone.GetAll();
 			foreach (Minion m in myMnions)
 			{
-				myPower += m.Cost;
+				myPower += m.AttackDamage;
 			}
 			Minion[] enemyMnions = state.CurrentOpponent.BoardZone.GetAll();
 			foreach (Minion m in enemyMnions)
 			{
-				enemyPower += m.Cost;
+				enemyPower += m.AttackDamage;
 			}
 
 			int enemyHealth2 = state.CurrentPlayer.Hero.Health;
@@ -31,15 +31,15 @@ namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts
 			int myPower2 = 0;
 			Minion[] enemyMnions2 = state.CurrentPlayer.BoardZone.GetAll();
 			foreach (Minion m in enemyMnions2) {
-				enemyPower2 += m.Cost;
+				enemyPower2 += m.AttackDamage;
 			}
 			Minion[] myMnions2 = state.CurrentOpponent.BoardZone.GetAll();
 			foreach (Minion m in myMnions2)
 			{
-				myPower2 += m.Cost;
+				myPower2 += m.AttackDamage;
 			}
 			
-			return  (myHealth2-myHealth)+(8*(enemyHealth-enemyHealth2))+(3*(myPower2-myPower))+(4*(enemyPower-enemyPower2));
+			return  (myHealth2-myHealth)+(8*(enemyHealth-enemyHealth2))+(5*(myPower2-myPower))+(4*(enemyPower-enemyPower2));
 		}
     }
 }

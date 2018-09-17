@@ -14,7 +14,7 @@ namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts
 		public static PlayerTask findNextMove(POGame.POGame poGame) {
 			tree = new tree.Tree(poGame);
 			long start = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-			long end = start + 200;
+			long end = start + 150;
 			long time = start;
 			while (time < end)
 			{
@@ -68,7 +68,7 @@ namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts
 				playerTask = state.CurrentPlayer.Options()[new Random().Next(state.CurrentPlayer.Options().Count)];
 				state.Process(playerTask);				
 			}
-			return Reward.getReward(tempNode.getState(), tree.getRoot().getState());
+			return Reward.getReward(state, tree.getRoot().getState());
 		}
 
 		private static void expandNode(Node node)

@@ -46,7 +46,9 @@ namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts.tree
 
 		internal Node getRandomChild()
 		{
-			return childArray[new Random().Next(childArray.Count)];
+			if (childArray.Count>1) {
+				return childArray[new Random().Next(childArray.Count - 1) + 1];
+			}return childArray[0];
 		}
 
 		public List<Node> getChildArray()
