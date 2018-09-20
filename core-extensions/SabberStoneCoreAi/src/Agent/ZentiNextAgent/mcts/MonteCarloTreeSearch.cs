@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using SabberStoneCore.Tasks;
 using SabberStoneCoreAi.Agent;
@@ -31,8 +32,15 @@ namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts
 				if (simulateNode.getChildArray().Count >0) {
 					simulateNode = simulateNode.getRandomChild();
 				}
-				double simulationResult = simulatePlay(simulateNode);
-
+				double simulationResult = 0;
+				try {
+					simulationResult = simulatePlay(simulateNode);
+				} catch (Exception)
+				{
+					break;
+				}
+				
+				
 				//Back Propagation
 				backPropagation(simulateNode, simulationResult);
 
@@ -61,13 +69,37 @@ namespace SabberStoneCoreAi.src.Agent.ZentiNextAgent.mcts
 
 			List<PlayerTask> options = tempNode.getState().CurrentPlayer.Options();
 			Dictionary<PlayerTask, POGame.POGame> states = tempNode.getState().Simulate(options);
-			PlayerTask playerTask = options[new Random().Next(options.Count)];
-			POGame.POGame state = states.GetValueOrDefault(playerTask);
+			Random random = new Random();
+			int rnd;			
+			rnd = random.Next(options.Count);
+			
+			POGame.POGame state = null;			
+			while (options[rnd].PlayerTaskType != PlayerTaskType.END_TURN) {
+				if (state == null){
+					
+					state = states.GetValueOrDefault(options[rnd]);
+				}
+				else {
+					
+					state.Process(options[rnd]);
+				}		
 
-			while (playerTask.PlayerTaskType != PlayerTaskType.END_TURN) {
-				playerTask = state.CurrentPlayer.Options()[new Random().Next(state.CurrentPlayer.Options().Count)];
-				state.Process(playerTask);				
+				options = state.CurrentPlayer.Options();				
+				rnd = random.Next(options.Count);
+				
 			}
+			if (state == null)
+			{
+				
+				state = states.GetValueOrDefault(options[rnd]);
+			}
+			else
+			{
+				
+				state.Process(state.CurrentPlayer.Options()[rnd]);				
+				
+			}
+			
 			return Reward.getReward(state, tree.getRoot().getState());
 		}
 
